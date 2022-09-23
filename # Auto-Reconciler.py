@@ -1,6 +1,7 @@
 # Auto-Reconciler
 
 from pickle import APPEND
+from tarfile import REGULAR_TYPES
 import selenium
 import time
 import creds
@@ -111,28 +112,103 @@ print(locations)
 
 sizeOfList = len(locations)
 
-# for i in range (sizeOfList):
+for i in range (sizeOfList):
 
 
-time.sleep(1)
-driver.find_element(By.CSS_SELECTOR, "#button-1016-btnEl").click() # select location arrow
-time.sleep(1)
-driver.find_element(By.CSS_SELECTOR, "#menuitem-1018-textEl").click() # select change location
-time.sleep(1)
-#driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(locations[i]) 
-driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(locations[0]) 
-time.sleep(1)
-driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(Keys.RETURN)
-time.sleep(1)
-driver.find_element(By.CSS_SELECTOR, "#ext-element-51").click() 
+    time.sleep(1)
+    driver.find_element(By.CSS_SELECTOR, "#button-1016-btnEl").click() # select location arrow
+    time.sleep(1)
+    driver.find_element(By.CSS_SELECTOR, "#menuitem-1018-textEl").click() # select change location
+    time.sleep(1)
+    #driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(locations[i]) 
+    driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(locations[i]) 
+    time.sleep(1)
+    driver.find_element(By.CSS_SELECTOR, "#ext-element-22").send_keys(Keys.RETURN)
+    time.sleep(1)
+    driver.find_element(By.CSS_SELECTOR, "#ext-element-51").click() 
 
-# at the stores page now navigate to: location >> purchasing >> recent vendor orders >> reconcile #1
-# look at that video about looping and selenium
-
-
+    # at the stores page now navigate to: location >> purchasing >> recent vendor orders >> reconcile #1
+    # look at that video about looping and selenium
 
 
+    time.sleep(2)
+    driver.find_element(By.CSS_SELECTOR, "#button-1059-btnInnerEl").click() # click purchasing
+    time.sleep(2)
+    driver.find_element(By.CSS_SELECTOR, "#menuitem-1063-textEl").click() # click recent vendor orders
+    time.sleep(2)
 
 
+    # reconcile all over/short errors
 
+    # Choose the first reconcile on page and click it. This chooses the "Ready for Reconcile option"
+    # Click next reconcile
+    # Click reconcile action button
+
+    # if no other pop up, go see if theres any more to reconcile for that store, if not then do the next store
+
+    # The structure goes as follows:
+
+    driver.find_element(By.PARTIAL_LINK_TEXT, "Reconcile").click()
+
+    while True:
+        try: # to resolve an over/short error
+            time.sleep(2)
+            driver.find_element(By.LINK_TEXT, "Reconcile").click()
+            time.sleep(2)
+            driver.find_element(By.CSS_SELECTOR, "#button-1717-btnInnerEl").click()
+            time.sleep(2)
+            error = driver.find_element(By.CSS_SELECTOR, "#messagebox-1002-msg").text
+            print("CrunchTime! Error: " + error)
+            if error == "You must adjust your Invoice Total so that the Over/Short Field is equal to zero.":
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+                numberField = driver.find_element(By.CSS_SELECTOR, "#displayfield-1692-inputEl").text
+                time.sleep(2)
+                print("... Pasting: " + numberField)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").click() 
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(Keys.BACKSPACE)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(numberField)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(Keys.ENTER)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1717-btnInnerEl").click()
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+
+            if error == '''At least one Invoice Price is displayed in red, indicating that it varies by 100% or more from the current Issue Cost for the product.
+
+    Click "OK" to continue Reconciling the order, or "Cancel" to return to the order screen.''':
+                
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+                numberField = driver.find_element(By.CSS_SELECTOR, "#displayfield-1692-inputEl").text
+                time.sleep(2)
+                print("... Pasting: " + numberField)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").click() 
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(Keys.BACKSPACE)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(numberField)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#numberfield-1689-inputEl").send_keys(Keys.ENTER)
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1717-btnInnerEl").click()
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+                driver.find_element(By.CSS_SELECTOR, "#button-1006-btnInnerEl").click()
+                time.sleep(2)
+
+        except: # stop trying, go back to the main loop and try the same thing with the next store
+
+            print("end of process")
+            break
 
