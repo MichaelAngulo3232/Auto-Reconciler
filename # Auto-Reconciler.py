@@ -31,13 +31,13 @@ driver.find_element(By.ID, "ext-element-22").send_keys(creds.EMusername)
 driver.find_element(By.ID, "ext-element-36").send_keys(creds.EMpassword)
 time.sleep(1)
 driver.find_element(By.ID, "ext-element-65").click()
-time.sleep(3)
+time.sleep(5)
 driver.find_element(By.CSS_SELECTOR, "#ext-element-102").click()
 time.sleep(3)
 driver.find_element(By.ID, "tool-1028-toolEl").click()
 time.sleep(4)
 driver.find_element(By.XPATH, "/html/body/div[6]/div/div/div[2]/div/div[2]/a/span").click()
-time.sleep(3)
+time.sleep(4)
 driver.switch_to.window(driver.window_handles[-1])
 time.sleep(2)
 element =  driver.find_element(By.CSS_SELECTOR, "#ext-element-22")
@@ -181,7 +181,6 @@ for i in range (sizeOfList):
                 time.sleep(2)
 
             if error == '''At least one Invoice Price is displayed in red, indicating that it varies by 100% or more from the current Issue Cost for the product.
-
     Click "OK" to continue Reconciling the order, or "Cancel" to return to the order screen.''':
                 
                 time.sleep(2)
@@ -210,5 +209,10 @@ for i in range (sizeOfList):
         except: # stop trying, go back to the main loop and try the same thing with the next store
 
             print("end of process")
-            break
+            time.sleep(2)
+            driver.back()
+            time.sleep(2)
+            driver.back()
 
+            break
+# at the end click back like 3 times to get to the original working page
